@@ -13,6 +13,7 @@ class Deck
         @cards << Card.new(suit, value, Card::RANKS[index])
       end
     end
+    @cards.shuffle!
   end
 
 end
