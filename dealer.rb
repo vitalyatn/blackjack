@@ -1,12 +1,12 @@
 class Dealer < User
 
-  def show_cards
-    if @@flag == 1
+  def show_cards(flag = 0)
+    if flag == 1
       super
     else
-      str = ""
+      str = "Карты игрока #{@name}:\n"
       @cards.each {|card|  str += "| * | " }
-      str += "\nСумма очков: * "
+      str += "\nСумма очков: * \n"
     end
   end
 end
