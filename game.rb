@@ -17,7 +17,6 @@ class Game
 
   def return_cards(user)
     user.cards = []
-    user.points = 0
   end
 
   def check_bank?
@@ -32,10 +31,7 @@ class Game
   end
 
   def take_card(user)
-    if valid?(user)
-      user.cards << @deck.cards.delete(@deck.cards.sample)
-      user.sum_of_point(user.cards.last)
-    end
+    user.cards << @deck.cards.delete(@deck.cards.sample) if valid?(user)
   end
 
   def valid?(user)
@@ -46,9 +42,11 @@ class Game
   end
 
   def define_winner
-    if @player.points > @dealer.points && @player.points <= BLACKJACK || @dealer.points > BLACKJACK && @player.points <= BLACKJACK
+    if @player.score > @dealer.score && @player.score <= BLACKJACK ||
+      @dealer.score > BLACKJACK && @player.score <= BLACKJACK
       @player
-    elsif @dealer.points > @player.points && @dealer.points <= BLACKJACK || @dealer.points <= BLACKJACK && @player.points > BLACKJACK
+    elsif @dealer.score > @player.score && @dealer.score <= BLACKJACK ||
+      @dealer.score <= BLACKJACK && @player.score > BLACKJACK
       @dealer
     else
       DEAD_HEAT
@@ -56,29 +54,23 @@ class Game
   end
 
   def open_cards
-    total_of_game = ""
-    total_of_game += @player.show_cards
-    total_of_game += @dealer.show_cards(1)
     winner = define_winner
     if winner != DEAD_HEAT
       winner.add_to_bank(@bank)
-      total_of_game += "Победил: #{winner.name}.
-      \rБаланс #{@player.name} = #{@player.bank}
-      \rБаланс #{@dealer.name} = #{@dealer.bank}"
     else
       @player.add_to_bank(@bank/2)
       @dealer.add_to_bank(@bank/2)
-      total_of_game += "ПОБЕДИЛА ДРУЖБА!"
     end
     @bank = 0
     return_cards(@player)
     return_cards(@dealer)
-    total_of_game
+    winner
   end
 
   private
   def validate!(user)
-       raise 'Карт не может быть больше трёх' if user.cards.count == User::MAX_CARDS_COUNT
+    raise 'Карт не может быть больше трёх' if user.cards.count == User::MAX_CARDS_COUNT
+    raise 'Нельзя добавить карту, т.к. очков больше 17' if user.is_a?( Dealer ) && user.score > 17
   end
 
 end
