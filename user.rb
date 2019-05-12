@@ -20,18 +20,15 @@ class User
   end
 
   def score
-    points ||= 0
-    if points.zero?
-      @cards.each do |card|
-        if card.value == :a
-          value = points <= 10 ? card.rank[1] : card.rank[0]
-        else
-          value = card.rank
-        end
-        points += value
+    points = 0
+    @cards.each do |card|
+      if card.value == :a
+        value = points <= 10 ? card.rank[1] : card.rank[0]
+      else
+        value = card.rank
       end
+      points += value
     end
     points
   end
-
 end

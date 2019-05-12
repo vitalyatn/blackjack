@@ -2,6 +2,7 @@ class Game
   attr_accessor :player, :dealer, :deck, :bank
   BLACKJACK = 21
   DEAD_HEAT = 'ничья'
+  MAX_DEALER_POINT = 17
 
   def initialize(name_player)
     @player = Player.new(name_player)
@@ -31,14 +32,10 @@ class Game
   end
 
   def take_card(user)
-    user.cards << @deck.cards.delete(@deck.cards.sample) if valid?(user)
-  end
-
-  def valid?(user)
     validate!(user)
-      true
-    rescue StandardError
-      false
+    user.cards << @deck.cards.delete(@deck.cards.sample)
+    rescue RuntimeError => e
+      puts e.message
   end
 
   def define_winner
@@ -69,8 +66,8 @@ class Game
 
   private
   def validate!(user)
-    raise 'Карт не может быть больше трёх' if user.cards.count == User::MAX_CARDS_COUNT
-    raise 'Нельзя добавить карту, т.к. очков больше 17' if user.is_a?( Dealer ) && user.score > 17
+    raise  'Карт не может быть больше трёх' if user.cards.count == User::MAX_CARDS_COUNT
+    raise  'Jack пропускает ход...' if user.is_a?( Dealer ) && user.score > MAX_DEALER_POINT
   end
 
 end

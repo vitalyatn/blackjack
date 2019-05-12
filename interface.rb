@@ -38,7 +38,7 @@ class Interface
   def start_game
     user_registration
     loop do
-      raise "Игру продолжить невозможно" if @game.check_bank?
+      raise ArgumentError, "Баланс пустой! Играть дальше невозможно!" if @game.check_bank?
       @game.deck = Deck.new
       @game.get_cards
       @game.make_bet
@@ -63,8 +63,8 @@ class Interface
       end
       puts "Сыграть еще?(введите 'д' или 'н')"
       break if gets.chomp == 'н'
-      rescue
-        puts "Баланс пустой! Играть дальше невозможно!"
+      rescue ArgumentError => e
+        puts e.message
         break
     end
   end
